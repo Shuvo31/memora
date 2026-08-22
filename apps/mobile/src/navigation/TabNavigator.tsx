@@ -1,19 +1,50 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { HomeScreen } from '../screens/HomeScreen';
-import { MemoriesScreen } from '../screens/MemoriesScreen';
-import { ChatScreen } from '../screens/ChatScreen';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useTheme } from '../theme/ThemeProvider';
-import { View, Text } from 'react-native';
 import { Home, Image as ImageIcon, MessageCircle, Book } from 'lucide-react-native';
 
-const Tab = createBottomTabNavigator();
+// Types
+import { MainTabParamList, HomeStackParamList, MemoriesStackParamList, ChatStackParamList, JournalStackParamList } from './types';
 
-// Placeholder for Journal Screen
-const JournalScreen = () => (
-  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-    <Text>Journal</Text>
-  </View>
+// Screens
+import { HomeScreen } from '../screens/HomeScreen';
+import { SettingsScreen } from '../screens/SettingsScreen';
+import { MemoriesScreen } from '../screens/MemoriesScreen';
+import { MemoryDetailScreen } from '../screens/MemoryDetailScreen';
+import { ChatScreen } from '../screens/ChatScreen';
+import { JournalScreen } from '../screens/JournalScreen';
+
+const Tab = createBottomTabNavigator<MainTabParamList>();
+const HomeStack = createNativeStackNavigator<HomeStackParamList>();
+const MemoriesStack = createNativeStackNavigator<MemoriesStackParamList>();
+const ChatStack = createNativeStackNavigator<ChatStackParamList>();
+const JournalStack = createNativeStackNavigator<JournalStackParamList>();
+
+const HomeNavigator = () => (
+  <HomeStack.Navigator screenOptions={{ headerShown: false }}>
+    <HomeStack.Screen name="HomeVault" component={HomeScreen} />
+    <HomeStack.Screen name="Settings" component={SettingsScreen} />
+  </HomeStack.Navigator>
+);
+
+const MemoriesNavigator = () => (
+  <MemoriesStack.Navigator screenOptions={{ headerShown: false }}>
+    <MemoriesStack.Screen name="MemoryFeed" component={MemoriesScreen} />
+    <MemoriesStack.Screen name="MemoryDetail" component={MemoryDetailScreen} />
+  </MemoriesStack.Navigator>
+);
+
+const ChatNavigator = () => (
+  <ChatStack.Navigator screenOptions={{ headerShown: false }}>
+    <ChatStack.Screen name="SoulChat" component={ChatScreen} />
+  </ChatStack.Navigator>
+);
+
+const JournalNavigator = () => (
+  <JournalStack.Navigator screenOptions={{ headerShown: false }}>
+    <JournalStack.Screen name="JournalMain" component={JournalScreen} />
+  </JournalStack.Navigator>
 );
 
 export const TabNavigator = () => {
@@ -30,18 +61,18 @@ export const TabNavigator = () => {
         tabBarActiveTintColor: theme.primary,
         tabBarInactiveTintColor: theme.textTertiary,
         tabBarIcon: ({ color, size }) => {
-          if (route.name === 'Home') return <Home color={color} size={size} />;
-          if (route.name === 'Memories') return <ImageIcon color={color} size={size} />;
-          if (route.name === 'Chat') return <MessageCircle color={color} size={size} />;
-          if (route.name === 'Journal') return <Book color={color} size={size} />;
+          if (route.name === 'HomeTab') return <Home color={color} size={size} />;
+          if (route.name === 'MemoriesTab') return <ImageIcon color={color} size={size} />;
+          if (route.name === 'ChatTab') return <MessageCircle color={color} size={size} />;
+          if (route.name === 'JournalTab') return <Book color={color} size={size} />;
           return null;
         },
       })}
     >
-      <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="Memories" component={MemoriesScreen} />
-      <Tab.Screen name="Chat" component={ChatScreen} />
-      <Tab.Screen name="Journal" component={JournalScreen} />
+      <Tab.Screen name="HomeTab" component={HomeNavigator} options={{ title: 'Home' }} />
+      <Tab.Screen name="MemoriesTab" component={MemoriesNavigator} options={{ title: 'Memories' }} />
+      <Tab.Screen name="ChatTab" component={ChatNavigator} options={{ title: 'Chat' }} />
+      <Tab.Screen name="JournalTab" component={JournalNavigator} options={{ title: 'Journal' }} />
     </Tab.Navigator>
   );
 };
